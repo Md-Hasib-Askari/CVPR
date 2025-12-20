@@ -1,0 +1,44 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+data/attendance/*.csv
+data/models/*.yml
+data/models/*.json
+dataset/*/
+
+# Keep directory structure
+!data/attendance/.gitkeep
+!data/models/.gitkeep
+!dataset/.gitkeep
+
+# Logs
+*.log
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Distribution
+dist/
+build/
+*.egg-info/

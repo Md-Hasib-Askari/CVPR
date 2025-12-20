@@ -124,3 +124,5 @@ dmypy.json
 
 person_3/
 FINAL/Assignment1/__pycache__/preprocess_img.cpython-313.pyc
+
+dataset/

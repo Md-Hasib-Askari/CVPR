@@ -25,18 +25,18 @@ class FaceRecognizer:
         print(os.listdir(dataset_path))
         for person in os.listdir(dataset_path):
             self.label_map[label_id] = person
-
+            
             for img in os.listdir(f"{dataset_path}/{person}"):
                 img_path = f"{dataset_path}/{person}/{img}"
                 image = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
                 if image is None:
                     continue
                 
-                face = detector._extract_face(image)
-                if face is None:
-                    continue
+                # face = detector._extract_face(image)
+                # if face is None:
+                    # continue
 
-                face = preprocess_face(face)
+                face = preprocess_face(image)
                 faces.append(face)
                 labels.append(label_id)
             label_id += 1
