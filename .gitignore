@@ -1,5 +1,5 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+*/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -123,3 +123,4 @@ dmypy.json
 .pyre/
 
 person_3/
+FINAL/Assignment1/__pycache__/preprocess_img.cpython-313.pyc

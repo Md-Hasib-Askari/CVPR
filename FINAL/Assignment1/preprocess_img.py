@@ -36,7 +36,7 @@ def preprocess_roi(thresh):
     x, y, w, h = cv2.boundingRect(c)
 
     digit = thresh[y:y+h, x:x+w]
-    return digit
+    return digit, (x, y, w, h)
 
 def preprocess_image(img):
     gray = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
@@ -60,7 +60,10 @@ def preprocess_image(img):
     thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
     plt.imshow(thresh, cmap='gray')
 
-    digit_bin = preprocess_roi(thresh)
+    roi = preprocess_roi(thresh)
+    if roi is None:
+        return None
+    digit_bin, (x, y, w, h) = roi
 
     ys, xs = np.where(digit_bin > 0)
 
@@ -98,4 +101,4 @@ def preprocess_image(img):
         x_off:x_off+digit_resized.shape[1]
     ] = digit_resized
 
-    return canvas
+    return canvas, (x, y, w, h)

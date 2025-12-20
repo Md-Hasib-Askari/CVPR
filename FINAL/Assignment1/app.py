@@ -34,6 +34,8 @@ class DigitRecognizer(VideoProcessorBase):
             if processed_img is None:
                 return VideoFrame.from_ndarray(img.astype(np.uint8), format="bgr24")
 
+            processed_img, (x, y, w, h) = processed_img
+
             reshaped = processed_img.reshape(1, 28, 28, 1)
 
             # Predict the digit
@@ -44,6 +46,14 @@ class DigitRecognizer(VideoProcessorBase):
                 label = "Uncertain"
             else:
                 label = str(np.argmax(prediction))
+            
+            cv2.rectangle(
+                img,
+                (x, y),
+                (x + w, y + h),
+                (255, 0, 0),
+                2
+            )
 
             # Overlay the prediction on the frame
             cv2.putText(
