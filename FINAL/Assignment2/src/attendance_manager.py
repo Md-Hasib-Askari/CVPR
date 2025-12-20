@@ -36,4 +36,4 @@ class AttendanceManager:
     def clear(self):
         self.marked.clear()
         with open(self.file_path, "w") as f:
-            f.write("Name,Time\n")
+            f.write("Name,Date,Time\n")

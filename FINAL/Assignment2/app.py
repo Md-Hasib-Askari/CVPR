@@ -31,7 +31,7 @@ def load_models():
 detector, recognizer, attendance = load_models()
 
 # Tabs
-tab1, tab2 = st.tabs(["Real-time Attendance", "Face Registration"])
+tab1, tab2, tab3 = st.tabs(["Real-time Attendance", "Face Registration", "View Records"])
 
 with tab1:
     st.header("Real-time Attendance Marking")
@@ -140,6 +140,31 @@ with tab2:
         subprocess.run([
             "python", "scripts/collect_faces.py", student_name.strip()
         ])
+
+with tab3:
+    st.header("View Attendance Records")
+    st.markdown("View and download attendance records.")
+
+    col1, col2 = st.columns(2)
+
+    refresh_button = col1.button("Refresh Records")
+    clear_button = col2.button("Clear Records")
+    if refresh_button:
+        pass  # Just to trigger re-run
+    if clear_button:
+        attendance.clear()
+        st.success("Attendance records cleared.")
+
+    df = attendance.get_attendance()
+    st.dataframe(df, use_container_width=True)
+
+    csv = df.to_csv().encode('utf-8')
+    st.download_button(
+        label="Download Attendance as CSV",
+        data=csv,
+        file_name='attendance_records.csv',
+        mime='text/csv',
+    )
 
 # Footer
 st.markdown("---")
