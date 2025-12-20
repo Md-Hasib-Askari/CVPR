@@ -31,7 +31,6 @@ def preprocess_roi(thresh):
     if not valid_contours:
         return None
 
-    # NOW pick the digit
     c = max(valid_contours, key=cv2.contourArea)
     x, y, w, h = cv2.boundingRect(c)
 

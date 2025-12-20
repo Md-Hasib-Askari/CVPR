@@ -18,7 +18,7 @@ try:
         return keras.models.load_model('digit_model.keras')
     model = load_model()
 except:
-    st.error("Failed to load the model. Please ensure 'digit_model.h5' is in the correct path.")
+    st.error("Failed to load the model. Please ensure 'digit_model.keras' is in the correct path.")
     st.stop()
 
 # Video processor
