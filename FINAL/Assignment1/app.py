@@ -5,6 +5,8 @@ import keras
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase
 from av import VideoFrame
 
+from preprocess_img import preprocess_image
+
 st.set_page_config(page_title="Real-time Digit Recognition", layout="centered")
 st.title("Real-time Digit Recognition")
 st.write("Show your handwritten digits (0-9) inside the box.")
@@ -27,51 +29,38 @@ class DigitRecognizer(VideoProcessorBase):
 
     def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
-        # img = cv2.flip(img, 1)  # Mirror the image
+        try:
+            processed_img = preprocess_image(img)
+            if processed_img is None:
+                return VideoFrame.from_ndarray(img.astype(np.uint8), format="bgr24")
 
-        h, w, _ = img.shape
+            reshaped = processed_img.reshape(1, 28, 28, 1)
 
-        # ROI box
-        x1, y1 = int(w * 0.3), int(h * 0.3)
-        x2, y2 = int(w * 0.7), int(h * 0.7)
+            # Predict the digit
+            prediction = self.model.predict(x=reshaped)
+            confidence = np.max(prediction)
 
-        cv2.rectangle(img=img, pt1=(x1, y1), pt2=(x2, y2), color=(0, 255, 0), thickness=2)
-        roi = img[y1:y2, x1:x2]
+            if confidence < 0.7:
+                label = "Uncertain"
+            else:
+                label = str(np.argmax(prediction))
 
-        # Preprocess the image
-        gray = cv2.cvtColor(src=roi, code=cv2.COLOR_BGR2GRAY)
-        blur = cv2.GaussianBlur(src=gray, ksize=(5, 5), sigmaX=0)
-        _, thresh = cv2.threshold(
-            src=blur, 
-            thresh=100, 
-            maxval=255, 
-            type=cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU
-        )
-        resized = cv2.resize(src=thresh, dsize=(28, 28))
-        normalized = resized / 255.0
-        reshaped = normalized.reshape(1, 28, 28, 1)
+            # Overlay the prediction on the frame
+            cv2.putText(
+                img=img, 
+                text=f'Predicted Digit: {label} ({confidence:.2f})',
+                org=(10, 30), 
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX, 
+                fontScale=1, 
+                color=(0, 255, 0), 
+                thickness=2, 
+                lineType=cv2.LINE_AA
+            )
 
-        # Display the processed ROI for debugging (optional)
-        st.image(resized, caption='Processed ROI', width=150)
-
-        # Predict the digit
-        prediction = self.model.predict(x=reshaped)
-        digit = np.argmax(prediction)
-        confidence = np.max(prediction)
-
-        # Overlay the prediction on the frame
-        cv2.putText(
-            img=img, 
-            text=f'Predicted Digit: {digit} ({confidence:.2f})',
-            org=(x1, y1 - 10), 
-            fontFace=cv2.FONT_HERSHEY_SIMPLEX, 
-            fontScale=1, 
-            color=(0, 255, 0), 
-            thickness=2, 
-            lineType=cv2.LINE_AA
-        )
-
-        return VideoFrame.from_ndarray(img.astype(np.uint8), format="bgr24")
+            return VideoFrame.from_ndarray(img.astype(np.uint8), format="bgr24")
+        except Exception as e:
+            print(f"Error processing frame: {e}")
+            return VideoFrame.from_ndarray(img.astype(np.uint8), format="bgr24")
     
 # Start the webcam stream
 webrtc_streamer(
