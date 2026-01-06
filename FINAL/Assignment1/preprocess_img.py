@@ -38,6 +38,7 @@ def preprocess_roi(thresh):
     return digit, (x, y, w, h)
 
 def preprocess_image(img):
+    img = cv2.flip(img, 1)
     gray = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
 
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
@@ -87,7 +88,7 @@ def preprocess_image(img):
     )
 
     _, digit_resized = cv2.threshold(
-        digit_resized, 20, 255, cv2.THRESH_BINARY
+        digit_resized, 127, 255, cv2.THRESH_BINARY
     )
 
     canvas = np.zeros((28, 28), dtype=np.uint8)

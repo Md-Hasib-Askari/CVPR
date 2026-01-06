@@ -42,18 +42,17 @@ class DigitRecognizer(VideoProcessorBase):
             prediction = self.model.predict(x=reshaped)
             confidence = np.max(prediction)
 
-            if confidence < 0.7:
+            if confidence < 0.9:
                 label = "Uncertain"
             else:
                 label = str(np.argmax(prediction))
-            
-            cv2.rectangle(
-                img,
-                (x, y),
-                (x + w, y + h),
-                (255, 0, 0),
-                2
-            )
+                cv2.rectangle(
+                    img,
+                    (x, y),
+                    (x + w, y + h),
+                    (255, 0, 0),
+                    2
+                )
 
             # Overlay the prediction on the frame
             cv2.putText(

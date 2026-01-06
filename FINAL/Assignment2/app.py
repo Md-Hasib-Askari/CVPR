@@ -1,8 +1,6 @@
 import cv2
 import pandas as pd
 import streamlit as st
-from mtcnn import MTCNN
-import os
 
 from config.settings import *
 from src.face_detector import FaceDetector
@@ -20,7 +18,6 @@ st.markdown("Real-time attendance marking using face recognition.")
 
 @st.cache_resource
 def load_models():
-    register = MTCNN()
     detector = FaceDetector(CASCADE_PATH)
     recognizer = FaceRecognizer()
     recognizer.load(MODEL_PATH, LABEL_MAP_PATH)
